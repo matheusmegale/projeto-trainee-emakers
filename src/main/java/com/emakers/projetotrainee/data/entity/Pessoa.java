@@ -1,6 +1,7 @@
 package com.emakers.projetotrainee.data.entity;
 
 import com.emakers.projetotrainee.data.dto.request.PessoaRequestDTO;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -42,7 +43,8 @@ public class Pessoa {
             joinColumns = @JoinColumn(name = "id_pessoa"),
             inverseJoinColumns = @JoinColumn(name = "id_livro")
     )
-    private List<Livro> livros;
+    //@JsonManagedReference
+    private List<Livro> livros = new ArrayList<>();
 
     // metodo para adicionar um livro à lista
     public void addLivro(Livro livro) {

@@ -1,8 +1,10 @@
 package com.emakers.projetotrainee.controller;
 
+import com.emakers.projetotrainee.data.dto.request.EmprestarLivroRequestDTO;
 import com.emakers.projetotrainee.data.dto.request.PessoaRequestDTO;
 import com.emakers.projetotrainee.data.dto.response.PessoaResponseDTO;
 import com.emakers.projetotrainee.service.PessoaService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,13 +30,18 @@ public class PessoaController {
     }
 
     @PostMapping(value = "/create")
-    public ResponseEntity<PessoaResponseDTO> createPessoa(@RequestBody PessoaRequestDTO pessoaRequestDTO) {
+    public ResponseEntity<PessoaResponseDTO> createPessoa(@Valid @RequestBody PessoaRequestDTO pessoaRequestDTO) {
         return ResponseEntity.status(HttpStatus.OK).body(pessoaService.createPessoa(pessoaRequestDTO));
     }
 
     @PutMapping(value = "/update/{id_pessoa}")
-    public ResponseEntity<PessoaResponseDTO> updatePessoa(@PathVariable Long id_pessoa, @RequestBody PessoaRequestDTO pessoaRequestDTO) {
+    public ResponseEntity<PessoaResponseDTO> updatePessoa(@PathVariable Long id_pessoa,@Valid @RequestBody PessoaRequestDTO pessoaRequestDTO) {
         return ResponseEntity.status(HttpStatus.OK).body(pessoaService.updatePessoa(id_pessoa, pessoaRequestDTO));
+    }
+
+    @PatchMapping(value = "/pegarLivro/{id_pessoa}")
+    public ResponseEntity<PessoaResponseDTO> pegarLivro(@PathVariable Long id_pessoa,@Valid @RequestBody EmprestarLivroRequestDTO emprestarLivroRequestDTO) {
+        return ResponseEntity.status(HttpStatus.OK).body(pessoaService.pegarLivro(id_pessoa, emprestarLivroRequestDTO));
     }
 
     @DeleteMapping(value = "/delete/{id_pessoa}")
