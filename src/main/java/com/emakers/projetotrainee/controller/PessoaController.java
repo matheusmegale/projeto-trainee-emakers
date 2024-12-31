@@ -44,6 +44,11 @@ public class PessoaController {
         return ResponseEntity.status(HttpStatus.OK).body(pessoaService.pegarLivro(id_pessoa, emprestarLivroRequestDTO));
     }
 
+    @PatchMapping(value = "/devolverLivro/{id_pessoa}")
+    public ResponseEntity<PessoaResponseDTO> devolverLivro(@PathVariable Long id_pessoa,@Valid @RequestBody EmprestarLivroRequestDTO emprestarLivroRequestDTO) {
+        return ResponseEntity.status(HttpStatus.OK).body(pessoaService.devolverLivro(id_pessoa, emprestarLivroRequestDTO));
+    }
+
     @DeleteMapping(value = "/delete/{id_pessoa}")
     public ResponseEntity<String> deletePessoa(@PathVariable Long id_pessoa) {
         return ResponseEntity.status(HttpStatus.OK).body(pessoaService.deletePessoa(id_pessoa));

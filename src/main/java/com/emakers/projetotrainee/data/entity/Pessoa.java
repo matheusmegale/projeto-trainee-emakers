@@ -36,22 +36,26 @@ public class Pessoa {
     private String senha;
 
     @ManyToMany(fetch = FetchType.LAZY,
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE,
+            cascade = {
                     CascadeType.DETACH, CascadeType.REFRESH})
     @JoinTable(
             name = "emprestimo",
             joinColumns = @JoinColumn(name = "id_pessoa"),
             inverseJoinColumns = @JoinColumn(name = "id_livro")
     )
-    //@JsonManagedReference
+    //@JsonManagedReference // ISSO ATRAPALHA O CRUD
     private List<Livro> livros = new ArrayList<>();
 
     // metodo para adicionar um livro à lista
     public void addLivro(Livro livro) {
-        if (livros == null) {
-            livros = new ArrayList<>();
+//        if (livros == null) {
+//            livros = new ArrayList<>();
+//        }
+//        livros.add(livro);
+        if(!livros.contains(livro)) {
+            livros.add(livro);
+            livro.getPessoas().add(this);
         }
-        livros.add(livro);
     }
 
     @Builder

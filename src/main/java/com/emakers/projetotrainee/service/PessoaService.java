@@ -56,27 +56,13 @@ public class PessoaService {
         return new PessoaResponseDTO(pessoa);
     }
 
-    public PessoaResponseDTO pegarLivroQueEuFiz(Long id_pessoa, EmprestarLivroRequestDTO emprestarLivroRequestDTO) {
+    public PessoaResponseDTO pegarLivro(Long id_pessoa, EmprestarLivroRequestDTO emprestarLivroRequestDTO) {
         Pessoa pessoa = getPessoaEntityById(id_pessoa); // busca a pessoa pelo id
 
         Livro livro = livroRepository.findById(emprestarLivroRequestDTO.id_livro())
                 .orElseThrow(() -> new RuntimeException("Livro não encontrado")); // busca o livro pelo id
 
         System.out.println("CHEGUEI AQUI, ENCONTREI A PESSOA E O LIVRO NO BD");
-//        // Adiciona o livro à lista de livros da pessoa
-//        if (!pessoa.getLivros().contains(livro)) {
-//            pessoa.getLivros().add(livro);
-//        } else {
-//            throw new IllegalArgumentException("A relação entre o livro e a pessoa já existe.");
-//        }
-//
-//        // Adiciona a pessoa à lista de pessoas do livro
-//        if (!livro.getPessoas().contains(pessoa)) {
-//            livro.getPessoas().add(pessoa);
-//        }
-//
-//        pessoaRepository.save(pessoa); // salva a pessoa atualizada
-//        livroRepository.save(livro);
 
         // Verifica se a relação já existe para evitar duplicação
         if (!pessoa.getLivros().contains(livro)) {
@@ -86,13 +72,22 @@ public class PessoaService {
             System.out.println("Adicionando a pessoa na lista do livro");
             pessoaRepository.save(pessoa); // Salva a pessoa para persistir a relação
             System.out.println("Salvando a pessoa");
-            livroRepository.save(livro); // Salva o livro para garantir consistência
-            System.out.println("Salvando o livro");
+            //livroRepository.save(livro); // Salva o livro para garantir consistência
+            //System.out.println("Salvando o livro");
+            System.out.println("Pessoas do livro de id " + livro.getId_livro());
+            for(int i = 0; i < livro.getPessoas().size(); i++) {
+                System.out.println(livro.getPessoas().get(i).getNome());
+            }
         } else {
             throw new IllegalArgumentException("A relação entre o livro e a pessoa já existe.");
         }
 
-//        // Monta a resposta
+        // Monta a resposta
+        // A resposta deve ser retornada desta maneira porque estava dando problema de serialização
+        // Quando uma pessoa pegava um livro emprestado, a relação era adicionada à tabela emprestimo
+        // corretamente, porém, ao retornar o objeto PessoaResponseDTO, dava erro de serialização.
+        // As anotações @JsonManagedReference e @JsonBackReference, que são usadas para resolver
+        // o problema de serialização, estavam causando erro no CRUD
 //        List<LivroResponseDTO> livrosDto = pessoa.getLivros().stream()
 //                .map(l -> new LivroResponseDTO(l.getId_livro(), l.getNome(), l.getAutor(), l.getData_lancamento()))
 //                .collect(Collectors.toList());
@@ -101,18 +96,27 @@ public class PessoaService {
         return new PessoaResponseDTO(pessoa);
     }
 
-    public PessoaResponseDTO pegarLivro(Long idPessoa, EmprestarLivroRequestDTO emprestarLivroRequestDTO) {
-        Pessoa pessoa = pessoaRepository.findById(idPessoa)
-                .orElseThrow(() -> new RuntimeException("Pessoa não encontrada"));
+    public PessoaResponseDTO devolverLivro(Long id_pessoa, EmprestarLivroRequestDTO emprestarLivroRequestDTO) {
+        Pessoa pessoa = getPessoaEntityById(id_pessoa);
 
         Livro livro = livroRepository.findById(emprestarLivroRequestDTO.id_livro())
-                .orElseThrow(() -> new RuntimeException("Livro não encontrado"));
+                .orElseThrow(() -> new RuntimeException("Livro não encontrado")); // busca o livro pelo id
 
-        pessoa.getLivros().add(livro);
-        pessoaRepository.save(pessoa);
+        if(pessoa.getLivros().contains(livro)) {
+            for(int i = 0; i < pessoa.getLivros().size(); i++) {
+                if(pessoa.getLivros().get(i) == livro) {
+                    pessoa.getLivros().remove(i);
+                    // depois tem que tirar a pessoa da lista de pessoas do livro também
+                }
+            }
+            pessoaRepository.save(pessoa);
+        } else {
+            throw new IllegalArgumentException("Você não está com esse livro.");
+        }
 
         return new PessoaResponseDTO(pessoa);
     }
+
 
     public String deletePessoa(Long id_pessoa) {
         Pessoa pessoa = getPessoaEntityById(id_pessoa);
