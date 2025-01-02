@@ -106,10 +106,20 @@ public class PessoaService {
             for(int i = 0; i < pessoa.getLivros().size(); i++) {
                 if(pessoa.getLivros().get(i) == livro) {
                     pessoa.getLivros().remove(i);
-                    // depois tem que tirar a pessoa da lista de pessoas do livro também
                 }
             }
             pessoaRepository.save(pessoa);
+
+            for(int i = 0; i < livro.getPessoas().size(); i++) {
+                if(livro.getPessoas().get(i) == pessoa) {
+                    livro.getPessoas().remove(i);
+                }
+            }
+            livroRepository.save(livro);
+            System.out.println("Pessoas do livro de id " + livro.getId_livro());
+            for(int i = 0; i < livro.getPessoas().size(); i++) {
+                System.out.println(livro.getPessoas().get(i).getNome());
+            }
         } else {
             throw new IllegalArgumentException("Você não está com esse livro.");
         }
