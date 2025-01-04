@@ -53,4 +53,9 @@ public class PessoaController {
     public ResponseEntity<String> deletePessoa(@PathVariable Long id_pessoa) {
         return ResponseEntity.status(HttpStatus.OK).body(pessoaService.deletePessoa(id_pessoa));
     }
+
+    @GetMapping
+    public ResponseEntity<String> getUser() {
+        return ResponseEntity.ok("Você está no sistema!");
+    }
 }
