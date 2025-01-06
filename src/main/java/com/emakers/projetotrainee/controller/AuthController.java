@@ -4,6 +4,8 @@ import com.emakers.projetotrainee.data.dto.request.LoginRequestDTO;
 import com.emakers.projetotrainee.data.dto.request.RegisterRequestDTO;
 import com.emakers.projetotrainee.data.dto.response.ResponseDTO;
 import com.emakers.projetotrainee.data.entity.Pessoa;
+import com.emakers.projetotrainee.exception.general.EmailNotFoundException;
+import com.emakers.projetotrainee.exception.general.PasswordIncorrectException;
 import com.emakers.projetotrainee.infra.security.TokenService;
 import com.emakers.projetotrainee.repository.PessoaRepository;
 import lombok.RequiredArgsConstructor;
@@ -33,19 +35,20 @@ public class AuthController {
 //            String token = this.tokenService.generateToken(pessoa);
 //            return ResponseEntity.ok(new ResponseDTO(pessoa.getNome(), token)); // testar com PessoaResponseDTO depois
 //        }
-//        return ResponseEntity.badRequest().build();
+//        return ResponseEntity.badRequest().build(); // isso não mostrava a mensagem de exceção
 //    }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequestDTO body) {
         Pessoa pessoa = this.pessoaRepository.findByEmail(body.email())
-                .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado"));
+                .orElseThrow(() -> new EmailNotFoundException());
 
         if (passwordEncoder.matches(body.senha(), pessoa.getSenha())) {
             String token = this.tokenService.generateToken(pessoa);
             return ResponseEntity.ok(new ResponseDTO(pessoa.getNome(), token));
         }
-        throw new RuntimeException("Senha incorreta");
+        // throw new RuntimeException("Senha incorreta");
+        throw new PasswordIncorrectException();
     }
 
 

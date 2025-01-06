@@ -7,6 +7,9 @@ import com.emakers.projetotrainee.data.dto.response.LivroResponseDTO;
 import com.emakers.projetotrainee.data.dto.response.PessoaResponseDTO;
 import com.emakers.projetotrainee.data.entity.Livro;
 import com.emakers.projetotrainee.data.entity.Pessoa;
+import com.emakers.projetotrainee.exception.general.AlreadyGotBookException;
+import com.emakers.projetotrainee.exception.general.DidNotGetBookException;
+import com.emakers.projetotrainee.exception.general.EntityNotFoundException;
 import com.emakers.projetotrainee.repository.LivroRepository;
 import com.emakers.projetotrainee.repository.PessoaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,39 +63,21 @@ public class PessoaService {
         Pessoa pessoa = getPessoaEntityById(id_pessoa); // busca a pessoa pelo id
 
         Livro livro = livroRepository.findById(emprestarLivroRequestDTO.id_livro())
-                .orElseThrow(() -> new RuntimeException("Livro não encontrado")); // busca o livro pelo id
-
-        System.out.println("CHEGUEI AQUI, ENCONTREI A PESSOA E O LIVRO NO BD");
+                .orElseThrow(() -> new EntityNotFoundException(emprestarLivroRequestDTO.id_livro())); // busca o livro pelo id
 
         // Verifica se a relação já existe para evitar duplicação
         if (!pessoa.getLivros().contains(livro)) {
             pessoa.getLivros().add(livro); // Adiciona o livro à pessoa
-            System.out.println("Adicionando o livro na lista da pessoa");
             livro.getPessoas().add(pessoa); // Adiciona a pessoa ao livro
-            System.out.println("Adicionando a pessoa na lista do livro");
             pessoaRepository.save(pessoa); // Salva a pessoa para persistir a relação
-            System.out.println("Salvando a pessoa");
-            //livroRepository.save(livro); // Salva o livro para garantir consistência
-            //System.out.println("Salvando o livro");
             System.out.println("Pessoas do livro de id " + livro.getId_livro());
             for(int i = 0; i < livro.getPessoas().size(); i++) {
                 System.out.println(livro.getPessoas().get(i).getNome());
             }
         } else {
-            throw new IllegalArgumentException("A relação entre o livro e a pessoa já existe.");
+            throw new AlreadyGotBookException(emprestarLivroRequestDTO.id_livro());
         }
 
-        // Monta a resposta
-        // A resposta deve ser retornada desta maneira porque estava dando problema de serialização
-        // Quando uma pessoa pegava um livro emprestado, a relação era adicionada à tabela emprestimo
-        // corretamente, porém, ao retornar o objeto PessoaResponseDTO, dava erro de serialização.
-        // As anotações @JsonManagedReference e @JsonBackReference, que são usadas para resolver
-        // o problema de serialização, estavam causando erro no CRUD
-//        List<LivroResponseDTO> livrosDto = pessoa.getLivros().stream()
-//                .map(l -> new LivroResponseDTO(l.getId_livro(), l.getNome(), l.getAutor(), l.getData_lancamento()))
-//                .collect(Collectors.toList());
-//
-//        return new PessoaResponseDTO(pessoa.getId_pessoa(), pessoa.getNome(), pessoa.getCep(), pessoa.getEmail(), pessoa.getSenha(), livrosDto);
         return new PessoaResponseDTO(pessoa);
     }
 
@@ -100,7 +85,7 @@ public class PessoaService {
         Pessoa pessoa = getPessoaEntityById(id_pessoa);
 
         Livro livro = livroRepository.findById(emprestarLivroRequestDTO.id_livro())
-                .orElseThrow(() -> new RuntimeException("Livro não encontrado")); // busca o livro pelo id
+                .orElseThrow(() -> new EntityNotFoundException(emprestarLivroRequestDTO.id_livro())); // busca o livro pelo id
 
         if(pessoa.getLivros().contains(livro)) {
             for(int i = 0; i < pessoa.getLivros().size(); i++) {
@@ -121,12 +106,11 @@ public class PessoaService {
                 System.out.println(livro.getPessoas().get(i).getNome());
             }
         } else {
-            throw new IllegalArgumentException("Você não está com esse livro.");
+            throw new DidNotGetBookException(emprestarLivroRequestDTO.id_livro());
         }
 
         return new PessoaResponseDTO(pessoa);
     }
-
 
     public String deletePessoa(Long id_pessoa) {
         Pessoa pessoa = getPessoaEntityById(id_pessoa);
@@ -136,7 +120,7 @@ public class PessoaService {
     }
 
     private Pessoa getPessoaEntityById(Long id_pessoa) {
-        Pessoa pessoa = pessoaRepository.findById(id_pessoa).orElseThrow(()-> new RuntimeException("Pessoa nao encontrada"));
+        Pessoa pessoa = pessoaRepository.findById(id_pessoa).orElseThrow(()-> new EntityNotFoundException(id_pessoa));
         return pessoa;
     }
 }
