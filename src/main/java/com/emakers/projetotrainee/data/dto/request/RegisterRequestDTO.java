@@ -6,6 +6,8 @@ public record RegisterRequestDTO(
 
         @NotBlank(message = "Nome eh necessario")
         String nome,
+
+        @NotBlank(message = "CEP eh necessario")
         String cep,
 
         @NotBlank(message = "Email eh necessario")

@@ -1,8 +1,6 @@
 package com.emakers.projetotrainee.data.entity;
 
 import com.emakers.projetotrainee.data.dto.request.LivroRequestDTO;
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -34,24 +32,14 @@ public class Livro {
     private String data_lancamento;
 
     @ManyToMany(mappedBy = "livros")
-//    @JoinTable(
-//            name = "emprestimo",
-//            joinColumns = @JoinColumn(name = "id_livro"),
-//            inverseJoinColumns = @JoinColumn(name = "id_pessoa")
-//    )
-    //@JsonBackReference // ISSO ATRAPALHA O CRUD
     private List<Pessoa> pessoas = new ArrayList<>();
 
     // metodo para adicionar uma pessoa à lista
     public void addPessoa(Pessoa pessoa) {
-//        if (pessoas == null) {
-//            pessoas = new ArrayList<>();
-//        }
-//        pessoas.add(pessoa);
-        if (!pessoas.contains(pessoa)) {
-            pessoas.add(pessoa);
-            pessoa.getLivros().add(this);
+        if (pessoas == null) {
+            pessoas = new ArrayList<>();
         }
+        pessoas.add(pessoa);
     }
 
     @Builder

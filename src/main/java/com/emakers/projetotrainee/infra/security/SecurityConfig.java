@@ -42,6 +42,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/livro/create").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/livro/update/{id_livro}").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/livro/delete/{id_livro}").permitAll()
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);

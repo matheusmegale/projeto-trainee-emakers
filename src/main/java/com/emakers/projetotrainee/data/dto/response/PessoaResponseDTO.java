@@ -2,7 +2,6 @@ package com.emakers.projetotrainee.data.dto.response;
 
 import com.emakers.projetotrainee.data.entity.Pessoa;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 

@@ -6,7 +6,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -48,6 +47,18 @@ public class GeneralExceptionHandler {
 
     @ExceptionHandler(PasswordIncorrectException.class)
     private ResponseEntity<RestErrorMessage> passwordIncorrectHandler(PasswordIncorrectException exception) {
+        RestErrorMessage errorMessage = new RestErrorMessage(HttpStatus.BAD_REQUEST, exception.getMessage());
+        return ResponseEntity.status(errorMessage.status()).body(errorMessage);
+    }
+
+    @ExceptionHandler(CepInvalidoException.class)
+    private ResponseEntity<RestErrorMessage> cepInvalidoHandler(CepInvalidoException exception) {
+        RestErrorMessage errorMessage = new RestErrorMessage(HttpStatus.BAD_REQUEST, exception.getMessage());
+        return ResponseEntity.status(errorMessage.status()).body(errorMessage);
+    }
+
+    @ExceptionHandler(NumberOfBooksExceededException.class)
+    private ResponseEntity<RestErrorMessage> numberOfBooksExceededHandler(NumberOfBooksExceededException exception) {
         RestErrorMessage errorMessage = new RestErrorMessage(HttpStatus.BAD_REQUEST, exception.getMessage());
         return ResponseEntity.status(errorMessage.status()).body(errorMessage);
     }
