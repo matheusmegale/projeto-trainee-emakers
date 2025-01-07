@@ -42,7 +42,7 @@ public class GeneralExceptionHandler {
 
     @ExceptionHandler(EmailNotFoundException.class)
     private ResponseEntity<RestErrorMessage> emailNotFoundHandler(EmailNotFoundException exception) {
-        RestErrorMessage errorMessage = new RestErrorMessage(HttpStatus.BAD_REQUEST, exception.getMessage());
+        RestErrorMessage errorMessage = new RestErrorMessage(HttpStatus.NOT_FOUND, exception.getMessage());
         return ResponseEntity.status(errorMessage.status()).body(errorMessage);
     }
 

@@ -12,6 +12,9 @@ import com.emakers.projetotrainee.exception.general.DidNotGetBookException;
 import com.emakers.projetotrainee.exception.general.EntityNotFoundException;
 import com.emakers.projetotrainee.repository.LivroRepository;
 import com.emakers.projetotrainee.repository.PessoaRepository;
+import com.emakers.projetotrainee.viacep.EnderecoFeign;
+import com.emakers.projetotrainee.viacep.EnderecoResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +23,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+// @RequiredArgsConstructor // TOMAR CUIDADO COM ISSO AQUI
 public class PessoaService {
 
     @Autowired
@@ -27,6 +31,9 @@ public class PessoaService {
 
     @Autowired
     private LivroRepository livroRepository;
+
+    @Autowired
+    private EnderecoFeign enderecoFeign;
 
     public List<PessoaResponseDTO> getAllPessoas() {
         List<Pessoa> pessoas = pessoaRepository.findAll();
@@ -117,6 +124,11 @@ public class PessoaService {
         pessoaRepository.delete(pessoa);
 
         return "Pessoa de id: " + id_pessoa + " deletada.";
+    }
+
+    public EnderecoResponse getEndereco(Long id_pessoa) {
+        Pessoa pessoa = getPessoaEntityById(id_pessoa);
+        return enderecoFeign.getEnderecoWithViacep(pessoa.getCep());
     }
 
     private Pessoa getPessoaEntityById(Long id_pessoa) {

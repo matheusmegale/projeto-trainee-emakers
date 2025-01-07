@@ -58,4 +58,10 @@ public class PessoaController {
     public ResponseEntity<String> getUser() {
         return ResponseEntity.ok("Você está no sistema!");
     }
+
+    // metodo para utilizar api externa (ViaCep)
+    @GetMapping(value = "/endereco/{id_pessoa}")
+    public ResponseEntity getEndereco(@PathVariable Long id_pessoa) {
+        return ResponseEntity.status(HttpStatus.OK).body(pessoaService.getEndereco(id_pessoa));
+    }
 }
