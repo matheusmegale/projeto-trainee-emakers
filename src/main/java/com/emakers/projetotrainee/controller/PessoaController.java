@@ -39,8 +39,7 @@ public class PessoaController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    @GetMapping(value = "/all",
-    produces = "aplication/json")
+    @GetMapping(value = "/all")
     public ResponseEntity<List<PessoaResponseDTO>> getAllPessoas() {
         return ResponseEntity.status(HttpStatus.OK).body(pessoaService.getAllPessoas());
     }
@@ -209,10 +208,10 @@ public class PessoaController {
         return ResponseEntity.status(HttpStatus.OK).body(pessoaService.deletePessoa(id_pessoa));
     }
 
-//    @GetMapping
-//    public ResponseEntity<String> getUser() {
-//        return ResponseEntity.ok("Você está no sistema!");
-//    }
+    @GetMapping
+    public ResponseEntity<String> getUser() {
+        return ResponseEntity.ok("Você está no sistema!");
+    }
 
     // metodo para utilizar api externa (ViaCep)
     @Operation(summary = "Consulta o endereço de uma pessoa",
