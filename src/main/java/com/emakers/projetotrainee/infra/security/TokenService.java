@@ -12,6 +12,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
+// classe para geração e validação dos tokens
 @Service
 public class TokenService {
 
@@ -20,6 +21,7 @@ public class TokenService {
 
     public String generateToken(Pessoa pessoa) {
         try {
+            // definir um algoritmo para geração do token
             Algorithm algorithm = Algorithm.HMAC256(secret);
 
             String token = JWT.create()

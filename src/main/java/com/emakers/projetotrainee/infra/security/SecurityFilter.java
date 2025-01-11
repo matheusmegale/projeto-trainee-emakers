@@ -16,6 +16,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.Collections;
 
+// classe para verificar se o token do usuário é válido, se o token que ele mandou
+// é um token que esta aplicação emitiu
 @Component
 public class SecurityFilter extends OncePerRequestFilter {
     @Autowired

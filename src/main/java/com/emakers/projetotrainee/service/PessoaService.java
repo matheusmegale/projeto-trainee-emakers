@@ -11,6 +11,7 @@ import com.emakers.projetotrainee.repository.PessoaRepository;
 import com.emakers.projetotrainee.viacep.EnderecoFeign;
 import com.emakers.projetotrainee.viacep.EnderecoResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,6 +28,9 @@ public class PessoaService {
 
     @Autowired
     private EnderecoFeign enderecoFeign;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public List<PessoaResponseDTO> getAllPessoas() {
         List<Pessoa> pessoas = pessoaRepository.findAll();
@@ -52,7 +56,8 @@ public class PessoaService {
         pessoa.setNome(pessoaRequestDTO.nome());
         pessoa.setCep(pessoaRequestDTO.cep());
         pessoa.setEmail(pessoaRequestDTO.email());
-        pessoa.setSenha(pessoaRequestDTO.senha());
+        //pessoa.setSenha(pessoaRequestDTO.senha());
+        pessoa.setSenha(passwordEncoder.encode(pessoaRequestDTO.senha()));
         pessoaRepository.save(pessoa);
 
         return new PessoaResponseDTO(pessoa);
